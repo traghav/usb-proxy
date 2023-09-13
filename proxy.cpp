@@ -123,9 +123,12 @@ void *ep_loop_write(void *arg) {
 		struct usb_raw_transfer_io io = data_queue->front();
 		data_queue->pop_front();
 		data_mutex->unlock();
-		data_mutex->lock();
-		printf("Data queue length(loop write): %zu\n", data_queue->size());
-		data_mutex->unlock();
+		if(verbose_level) {
+			data_mutex->lock();
+			printf("Data queue length(loop write): %zu\n", data_queue->size());
+			data_mutex->unlock();
+		}
+
 
 		if (verbose_level >= 2)
 			printData(io, ep.bEndpointAddress, transfer_type, dir);
@@ -193,9 +196,12 @@ void *ep_loop_read(void *arg) {
 				data_mutex->lock();
 				data_queue->push_back(io);
 				data_mutex->unlock();
-				data_mutex->lock();
-				printf("Data queue length(loop read 0): %zu\n", data_queue->size());
-				data_mutex->unlock();
+				if (verbose_level) {
+					data_mutex->lock();
+					printf("Data queue length(loop read 0): %zu\n", data_queue->size());
+					data_mutex->unlock();
+				}
+
 				if (verbose_level)
 					printf("EP%x(%s_%s): enqueued %d bytes to queue\n", ep.bEndpointAddress,
 							transfer_type.c_str(), dir.c_str(), nbytes);
@@ -221,9 +227,12 @@ void *ep_loop_read(void *arg) {
 				data_mutex->lock();
 				data_queue->push_back(io);
 				data_mutex->unlock();
-				data_mutex->lock();
-				printf("Data queue length(loop read): %zu\n", data_queue->size());
-				data_mutex->unlock();
+				if (verbose_level) {
+					data_mutex->lock();
+					printf("Data queue length(loop read): %zu\n", data_queue->size());
+					data_mutex->unlock();
+				}
+
 				if (verbose_level)
 					printf("EP%x(%s_%s): enqueued %d bytes to queue\n", ep.bEndpointAddress,
 							transfer_type.c_str(), dir.c_str(), rv);
